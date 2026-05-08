@@ -1,0 +1,4 @@
+scripts.prepublish=false
+scripts.prepare=false
+scripts.postinstall=false
+ignore-scripts=true
