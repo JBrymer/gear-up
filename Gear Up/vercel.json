@@ -1,0 +1,11 @@
+{
+  "buildCommand": "pnpm build",
+  "installCommand": "pnpm install --no-optional",
+  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- .",
+  "github": {
+    "silent": true
+  },
+  "env": {
+    "PNPM_HOME": ".pnpm"
+  }
+}
