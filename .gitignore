@@ -1,0 +1,26 @@
+# Dependency directories
+node_modules/
+**/node_modules/
+
+# Build directories
+dist/
+.build/
+.next/
+out/
+
+# pnpm files
+.pnpm/
+pnpm-debug.log*
+
+# OS and editor
+*.log
+*.DS_Store
+.DS_Store
+.cursor/
+.idea/
+.vscode/
+
+# Project-specific ignores
+Gear Up/node_modules/
+Gear Up/.DS_Store
+Gear Up/.cursor/

@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Apex AI Dashboard Preview</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #121a33;
+      --panel-2: #172144;
+      --text: #e9edff;
+      --muted: #a9b3d9;
+      --accent: #7aa2ff;
+      --accent-2: #56e0c8;
+      --ok: #58d68d;
+      --warn: #f6c667;
+      --err: #ff7b7b;
+      --border: #27345f;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+      --radius: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      color: var(--text);
+      background: radial-gradient(circle at 20% -20%, #2b3f7c 0%, transparent 40%),
+        radial-gradient(circle at 100% 0%, #1f4f6c 0%, transparent 35%),
+        var(--bg);
+      line-height: 1.5;
+    }
+
+    .container {
+      width: min(1200px, calc(100% - 2rem));
+      margin: 1rem auto 2rem;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(8px);
+      background: rgba(11, 16, 32, 0.8);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .topbar-inner {
+      width: min(1200px, calc(100% - 2rem));
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 0.9rem 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+    }
+
+    .brand-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: linear-gradient(120deg, var(--accent), var(--accent-2));
+      box-shadow: 0 0 18px rgba(122, 162, 255, 0.75);
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin: 0;
+      padding: 0;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 0.92rem;
+      padding: 0.45rem 0.7rem;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      transition: 120ms ease;
+    }
+
+    nav a:hover {
+      color: var(--text);
+      border-color: var(--border);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .layout {
+      margin-top: 1rem;
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 1rem;
+      align-items: start;
+    }
+
+    .stack {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .card {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent 35%), var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1rem 1rem 1.1rem;
+    }
+
+    .card h2 {
+      margin: 0 0 0.4rem;
+      font-size: 1.1rem;
+      letter-spacing: 0.2px;
+    }
+
+    .card p {
+      margin: 0 0 0.7rem;
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.75rem;
+    }
+
+    .mini {
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 0.7rem 0.8rem;
+    }
+
+    .mini strong {
+      display: block;
+      margin-bottom: 0.2rem;
+      font-size: 0.92rem;
+    }
+
+    .mini span {
+      color: var(--muted);
+      font-size: 0.84rem;
+    }
+
+    ul.clean {
+      margin: 0.4rem 0 0;
+      padding-left: 1rem;
+      color: var(--muted);
+    }
+
+    ul.clean li + li {
+      margin-top: 0.3rem;
+    }
+
+    .status {
+      display: flex;
+      gap: 0.55rem;
+      flex-wrap: wrap;
+      margin-top: 0.5rem;
+    }
+
+    .pill {
+      font-size: 0.78rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      padding: 0.25rem 0.55rem;
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--muted);
+    }
+
+    .pill.ok { color: var(--ok); border-color: rgba(88, 214, 141, 0.35); }
+    .pill.warn { color: var(--warn); border-color: rgba(246, 198, 103, 0.35); }
+    .pill.err { color: var(--err); border-color: rgba(255, 123, 123, 0.35); }
+
+    aside .card h3 {
+      margin: 0 0 0.4rem;
+      font-size: 0.98rem;
+    }
+
+    aside .card p {
+      margin: 0;
+      font-size: 0.88rem;
+    }
+
+    .quick-cards {
+      display: grid;
+      gap: 0.8rem;
+    }
+
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.84rem;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 0.1rem 0.35rem;
+      border-radius: 6px;
+    }
+
+    @media (max-width: 980px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      aside {
+        order: -1;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+
+      .topbar-inner {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <span class="brand-dot" aria-hidden="true"></span>
+        <span>Apex AI Dashboard</span>
+      </div>
+      <nav aria-label="Main navigation">
+        <ul>
+          <li><a href="#overview">System Overview</a></li>
+          <li><a href="#platforms">Platforms</a></li>
+          <li><a href="#api">API Integrations</a></li>
+          <li><a href="#tools">Extensions &amp; Tools</a></li>
+          <li><a href="#setup">Setup Instructions</a></li>
+          <li><a href="#status">Status &amp; Health</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container layout">
+    <section class="stack" aria-label="Main content">
+      <section id="overview" class="card" aria-labelledby="overview-title">
+        <h2 id="overview-title">System Overview</h2>
+        <p>Apex AI centralizes model operations, API orchestration, and deployment monitoring in one unified control layer.</p>
+        <div class="grid-2">
+          <article class="mini">
+            <strong>Core Runtime</strong>
+            <span>Inference routing, policy checks, request shaping, and fallback handling.</span>
+          </article>
+          <article class="mini">
+            <strong>Data Plane</strong>
+            <span>Context ingestion, cache hydration, embeddings, and retrieval pipelines.</span>
+          </article>
+          <article class="mini">
+            <strong>Control Plane</strong>
+            <span>Service health, release channels, key rotation, and environment controls.</span>
+          </article>
+          <article class="mini">
+            <strong>Observability</strong>
+            <span>Latency tracking, error budgets, request traces, and SLA watchpoints.</span>
+          </article>
+        </div>
+      </section>
+
+      <section id="platforms" class="card" aria-labelledby="platforms-title">
+        <h2 id="platforms-title">Platforms</h2>
+        <p>Deployment and delivery targets supported by Apex AI:</p>
+        <ul class="clean">
+          <li>Web dashboard for operations teams and admins</li>
+          <li>Desktop command center for engineering workflows</li>
+          <li>Mobile companion panel for status checks and alerts</li>
+          <li>Cloud-hosted endpoints with region-aware failover</li>
+        </ul>
+      </section>
+
+      <section id="api" class="card" aria-labelledby="api-title">
+        <h2 id="api-title">API Integrations</h2>
+        <p>Integrated services are grouped and monitored for uptime, quota, and token health.</p>
+        <div class="grid-2">
+          <article class="mini">
+            <strong>Model Providers</strong>
+            <span>OpenAI, Anthropic, Google, and custom model gateways.</span>
+          </article>
+          <article class="mini">
+            <strong>Data Services</strong>
+            <span>Vector stores, relational backends, and object storage APIs.</span>
+          </article>
+          <article class="mini">
+            <strong>Communication</strong>
+            <span>Email, SMS, webhooks, and notification broker integrations.</span>
+          </article>
+          <article class="mini">
+            <strong>Security</strong>
+            <span>OAuth providers, secrets manager, and key lifecycle endpoints.</span>
+          </article>
+        </div>
+      </section>
+
+      <section id="tools" class="card" aria-labelledby="tools-title">
+        <h2 id="tools-title">Extensions &amp; Tools</h2>
+        <p>Optional modules extend orchestration, quality control, and workflow automation.</p>
+        <ul class="clean">
+          <li>Prompt testing sandbox with version snapshots</li>
+          <li>Automated eval runners for regression checks</li>
+          <li>Response quality scoring and guardrail rule packs</li>
+          <li>Action connectors for CRM, tickets, and internal systems</li>
+        </ul>
+      </section>
+
+      <section id="setup" class="card" aria-labelledby="setup-title">
+        <h2 id="setup-title">Setup Instructions</h2>
+        <p>Quick start sequence for a local preview and baseline runtime configuration.</p>
+        <ul class="clean">
+          <li>Clone project and install dependencies with <code>npm install</code>.</li>
+          <li>Define environment values in <code>.env.local</code> for provider keys and endpoints.</li>
+          <li>Run <code>npm run dev</code> and open the local dashboard URL.</li>
+          <li>Validate integrations from the status panel before production rollout.</li>
+        </ul>
+      </section>
+
+      <section id="status" class="card" aria-labelledby="status-title">
+        <h2 id="status-title">Status &amp; Health</h2>
+        <p>Current service indicators and health markers for active Apex AI components.</p>
+        <div class="status" aria-label="System health markers">
+          <span class="pill ok">Core Runtime: Operational</span>
+          <span class="pill ok">API Gateway: Healthy</span>
+          <span class="pill warn">Background Jobs: Degraded</span>
+          <span class="pill ok">Auth Provider: Stable</span>
+          <span class="pill err">One webhook target: Failing</span>
+        </div>
+      </section>
+    </section>
+
+    <aside aria-label="Quick cards rail">
+      <div class="quick-cards">
+        <section class="card">
+          <h3>Quick Summary</h3>
+          <p>Active environments: 3<br />Connected providers: 7<br />Total endpoints: 24</p>
+        </section>
+        <section class="card">
+          <h3>Attention Needed</h3>
+          <p>Webhook retries exceeded threshold in one destination. Review delivery logs and retry policy.</p>
+        </section>
+        <section class="card">
+          <h3>Recent Activity</h3>
+          <p>Model route updated to balanced mode. Last deployment completed 14 minutes ago.</p>
+        </section>
+        <section class="card">
+          <h3>Setup Tip</h3>
+          <p>Pin this preview in your browser for quick visual QA while refining dashboard content.</p>
+        </section>
+      </div>
+    </aside>
+  </main>
+</body>
+</html>
